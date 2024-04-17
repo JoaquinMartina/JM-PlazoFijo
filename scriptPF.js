@@ -118,11 +118,12 @@ function calcularReinvertir(monto,dias){
     document.getElementById("plazoFijo").innerHTML="";
     let porcentaje = calcularPorcentaje(dias);
     let resultado;
-    for(let i=0; i<4; i++){
+    encabezadoTabla();
+    for(let i=1; i<=4; i++){
         resultado = monto + (monto * (dias/360) * (porcentaje/100));
         let resultadoFinal = resultado.toFixed(2);
         let montoRedondeado = monto.toFixed(2);
-        mostrarTablaPlazoFijo(montoRedondeado, resultadoFinal);
+        mostrarTablaPlazoFijo(montoRedondeado, resultadoFinal, i);
         monto = resultado;
     }
 }
@@ -137,21 +138,41 @@ function mostrarPlazoFijo(resultado){
     }
 }
 
-function mostrarTablaPlazoFijo(monto, resultado){
+function encabezadoTabla(){
+    const filaPeriodo = document.createElement("tr");
+    const celdaPeriodo = document.createElement("th");
+    const celdaMonto = document.createElement("th");
+    const celdaResultado = document.createElement("th");
+    let periodo = document.createTextNode("Período");
+    let montoInicial = document.createTextNode("Monto Inicial");
+    let resultadoFinal = document.createTextNode("Monto Final");
 
+    celdaPeriodo.appendChild(periodo);
+    celdaMonto.appendChild(montoInicial);
+    celdaResultado.appendChild(resultadoFinal);
+    filaPeriodo.appendChild(celdaPeriodo);
+    filaPeriodo.appendChild(celdaMonto);
+    filaPeriodo.appendChild(celdaResultado);
+    document.getElementById("plazoFijoTable").appendChild(filaPeriodo);
+}
+
+function mostrarTablaPlazoFijo(monto, resultado, periodo){
     if(resultado){
-        const celdaPeriodo = document.createElement("tr");
-        const celdaMonto = document.createElement("tr");
-        const celdaResultado = document.createElement("tr");
-        let periodo = document.createTextNode("1");
+        const filaPeriodo = document.createElement("tr");
+        const celdaPeriodo = document.createElement("td");
+        const celdaMonto = document.createElement("td");
+        const celdaResultado = document.createElement("td");
+        let periodoFila = document.createTextNode(periodo);
         let montoInicial = document.createTextNode(monto);
         let resultadoFinal = document.createTextNode(resultado);
     
-        celdaPeriodo.appendChild(periodo);
+        celdaPeriodo.appendChild(periodoFila);
         celdaMonto.appendChild(montoInicial);
         celdaResultado.appendChild(resultadoFinal);
-        document.getElementById("plazoFijoTable").appendChild(celdaPeriodo);
-        document.getElementById("plazoFijoTable").appendChild(celdaMonto);
-        document.getElementById("plazoFijoTable").appendChild(celdaResultado);
+        filaPeriodo.appendChild(celdaPeriodo);
+        filaPeriodo.appendChild(celdaMonto);
+        filaPeriodo.appendChild(celdaResultado);
+        document.getElementById("plazoFijoTable").appendChild(filaPeriodo);
     }
 }
+
