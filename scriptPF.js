@@ -71,8 +71,8 @@ function validarDatos(){
     }
 
     if(contErr == 0){
-        calcularMontoFinal(monto, dias);
-        //calcularReinvertir(monto, dias);
+        //calcularMontoFinal(monto, dias);
+        calcularReinvertir(monto, dias);
     }
 }
 
@@ -110,8 +110,8 @@ function calcularPorcentaje(dias){
 function calcularMontoFinal(monto,dias){
     let porcentaje = calcularPorcentaje(dias);
     let resultado = monto + (monto * (dias/360) * (porcentaje/100));
-    mostrarPlazoFijo(resultado);
-    //mostrarTablaPlazoFijo(monto, resultado);
+    let resultadoFinal = resultado.toFixed(2);
+    mostrarPlazoFijo(resultadoFinal);
 }
 
 function calcularReinvertir(monto,dias){
@@ -120,7 +120,9 @@ function calcularReinvertir(monto,dias){
     let resultado;
     for(let i=0; i<4; i++){
         resultado = monto + (monto * (dias/360) * (porcentaje/100));
-        mostrarTablaPlazoFijo(monto, resultado);
+        let resultadoFinal = resultado.toFixed(2);
+        let montoRedondeado = monto.toFixed(2);
+        mostrarTablaPlazoFijo(montoRedondeado, resultadoFinal);
         monto = resultado;
     }
 }
@@ -138,9 +140,9 @@ function mostrarPlazoFijo(resultado){
 function mostrarTablaPlazoFijo(monto, resultado){
 
     if(resultado){
-        const celdaPeriodo = document.createElement("td");
-        const celdaMonto = document.createElement("td");
-        const celdaResultado = document.createElement("td");
+        const celdaPeriodo = document.createElement("tr");
+        const celdaMonto = document.createElement("tr");
+        const celdaResultado = document.createElement("tr");
         let periodo = document.createTextNode("1");
         let montoInicial = document.createTextNode(monto);
         let resultadoFinal = document.createTextNode(resultado);
