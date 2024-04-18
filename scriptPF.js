@@ -7,81 +7,71 @@ function iniciar(){
 
 function clickCalcular(evento){
     evento.preventDefault();
-    validarDatos();
+
+    document.getElementById("errores").innerHTML="";
+    document.getElementById("plazoFijo").innerHTML="";
+    document.getElementById("plazoFijoTable").innerHTML="";
+
+    const nombre = document.getElementById("txtNombre").value;
+    const apellido = document.getElementById("txtApellido").value;
+    const monto = parseFloat(document.getElementById("txtMonto").value);
+    const dias = parseInt(document.getElementById("txtDias").value);
+    const checkReinvertir = document.getElementById("siReinvertir").checked;
+
+    const mensajeError = validarDatos(nombre, apellido, monto, dias);
+
+    if(mensajeError.length !== 0){
+        mostrarError(mensajeError);
+        return;
+    }
+
+    if(checkReinvertir){
+        calcularReinvertir(monto, dias);
+    }else{
+        let resultado = calcularMontoFinal(monto, dias);
+        mostrarPlazoFijo(resultado);
+    }
 }
 
-function validarDatos(){
+function validarDatos(nombre, apellido, monto, dias){
 
-    document.getElementById("plazoFijo").innerHTML="";
-
-    let mensajeError="";
-    let contErr = 0;
-
-    let nombre = document.getElementById("txtNombre").value;
-    let apellido = document.getElementById("txtApellido").value;
-    let monto = parseFloat(document.getElementById("txtMonto").value);
-    let dias = parseInt(document.getElementById("txtDias").value);
+    const mensajeError = [];
 
     if(nombre.length == 0){
-        //alert ("Debe ingresar un Nombre");
-        mensajeError += "Debe ingresar un Nombre";
-        mostrarError(mensajeError);
-        mensajeError = "";
-        contErr++;
+        mensajeError.push("Debe ingresar un Nombre");
     }
 
     if(apellido.length == 0){
-        //alert ("Debe ingresar un Apellido");
-        mensajeError += "Debe ingresar un Apellido";
-        mostrarError(mensajeError);
-        mensajeError = "";
-        contErr++;
+        mensajeError.push("Debe ingresar un Apellido");
     }
 
     if(Number.isFinite(monto) == false){
-        //alert ("Debe ingresar un Monto en numero");
-        mensajeError += "Debe ingresar un Monto en pesos/dolares";
-        mostrarError(mensajeError);
-        mensajeError = "";
-        contErr++;
+        mensajeError.push("Debe ingresar un Monto en pesos/dolares");
     }
 
     if(monto<1000){
-        //alert ("Debe ingresar un Monto superior a $1000");
-        mensajeError += "Debe ingresar como mínimo un monto de $1000";
-        mostrarError(mensajeError);
-        mensajeError = "";
-        contErr++;
+        mensajeError.push("Debe ingresar como mínimo un monto de $1000");
     }
 
     if(Number.isFinite(dias) == false){
-        //alert ("Debe ingresar una cantidad de dias");
-        mensajeError += "Debe ingresar una cantidad de días";
-        mostrarError(mensajeError);
-        mensajeError = "";
-        contErr++;
+        mensajeError.push("Debe ingresar una cantidad de días");
     }
 
     if(dias<30){
-        //alert ("Debe ingresar una cantidad de días superior a 30");
-        mensajeError += "Debe ingresar una cantidad de días superior a 30";
-        mostrarError(mensajeError);
-        mensajeError = "";
-        contErr++;
+        mensajeError.push("Debe ingresar una cantidad de días superior a 30");
     }
 
-    if(contErr == 0){
-        calcularMontoFinal(monto, dias);
-        //calcularReinvertir(monto, dias);
-    }
+    return mensajeError;
 }
 
 function mostrarError(mensajeError){
-    const parrafoError = document.createElement("p");
-    var contenido = document.createTextNode(mensajeError);
-
-    parrafoError.appendChild(contenido);
-    document.getElementById("plazoFijo").appendChild(parrafoError);
+    for(const mensaje of mensajeError){
+        const listaErrores = document.createElement("li");
+        var contenido = document.createTextNode(mensaje);
+    
+        listaErrores.appendChild(contenido);
+        document.getElementById("errores").appendChild(listaErrores);
+    }
 
 }
 
@@ -110,46 +100,60 @@ function calcularPorcentaje(dias){
 function calcularMontoFinal(monto,dias){
     let porcentaje = calcularPorcentaje(dias);
     let resultado = monto + (monto * (dias/360) * (porcentaje/100));
-    mostrarPlazoFijo(resultado);
-    //mostrarTablaPlazoFijo(monto, resultado);
-}
-
-function calcularReinvertir(monto,dias){
-    document.getElementById("plazoFijo").innerHTML="";
-    let porcentaje = calcularPorcentaje(dias);
-    let resultado;
-    for(let i=0; i<4; i++){
-        resultado = monto + (monto * (dias/360) * (porcentaje/100));
-        mostrarTablaPlazoFijo(monto, resultado);
-        monto = resultado;
-    }
+    return resultado;
 }
 
 function mostrarPlazoFijo(resultado){
     if(resultado){
         const parrafoResultado = document.createElement("p");
-        let contenido = document.createTextNode("El Monto final es de $: " + resultado);
+        let contenido = document.createTextNode("El Monto final es de $: " + resultado.toFixed(2));
     
         parrafoResultado.appendChild(contenido);
         document.getElementById("plazoFijo").appendChild(parrafoResultado);
     }
 }
 
-function mostrarTablaPlazoFijo(monto, resultado){
+function calcularReinvertir(monto, dias){
 
-    if(resultado){
+    const tabla = document.createElement("table");
+    const filaCabecera = document.createElement("tr");
+    const cabeceraPeriodo = document.createElement("th");
+    const cabeceraMonto = document.createElement("th");
+    const cabeceraResultado = document.createElement("th");
+    let cabPeriodo = document.createTextNode("Período");
+    let cabMontoInicial = document.createTextNode("Monto Inicial");
+    let cabResultadoFinal = document.createTextNode("Monto Final");
+
+    cabeceraPeriodo.appendChild(cabPeriodo);
+    cabeceraMonto.appendChild(cabMontoInicial);
+    cabeceraResultado.appendChild(cabResultadoFinal);
+    filaCabecera.appendChild(cabeceraPeriodo);
+    filaCabecera.appendChild(cabeceraMonto);
+    filaCabecera.appendChild(cabeceraResultado);
+    tabla.appendChild(filaCabecera);
+
+    for(let periodo=1; periodo<=4; periodo++){
+        
+        let resultado = calcularMontoFinal(monto, dias);
+
+        const filaPeriodo = document.createElement("tr");
         const celdaPeriodo = document.createElement("td");
         const celdaMonto = document.createElement("td");
         const celdaResultado = document.createElement("td");
-        let periodo = document.createTextNode("1");
-        let montoInicial = document.createTextNode(monto);
-        let resultadoFinal = document.createTextNode(resultado);
+        let periodoFila = document.createTextNode(periodo);
+        let montoInicial = document.createTextNode(monto.toFixed(2));
+        let resultadoFinal = document.createTextNode(resultado.toFixed(2));
     
-        celdaPeriodo.appendChild(periodo);
+        celdaPeriodo.appendChild(periodoFila);
         celdaMonto.appendChild(montoInicial);
         celdaResultado.appendChild(resultadoFinal);
-        document.getElementById("plazoFijoTable").appendChild(celdaPeriodo);
-        document.getElementById("plazoFijoTable").appendChild(celdaMonto);
-        document.getElementById("plazoFijoTable").appendChild(celdaResultado);
+        filaPeriodo.appendChild(celdaPeriodo);
+        filaPeriodo.appendChild(celdaMonto);
+        filaPeriodo.appendChild(celdaResultado);
+        tabla.appendChild(filaPeriodo);
+
+        monto = resultado;
     }
+    document.getElementById("plazoFijoTable").appendChild(tabla);
 }
+

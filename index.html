@@ -3,26 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
 <script src="scriptPF.js"></script>
 
 <h1>Simulador Plazo Fijo</h1>
-    <form action="">
-        <input type="text" id="txtNombre" placeholder="Nombre"><br>
-        <input type="text" id="txtApellido" placeholder="Apellido"><br>
-        <input type="text" id="txtMonto" placeholder="Monto a invertir en $"><br>
-        <input type="text" id="txtDias" placeholder="Cantidad de dias"><br>
-        <button type="submit" id="btnCalcular">Calcular</button>
-    </form>
-    <button type="submit" id="btnReinvertir">Reinvertir Capital</button>
+    <div id="errores">
 
+    </div>
+    <br>
+    <form action="">
+        <label><input type="text" id="txtNombre" placeholder="Nombre"></label><br>
+        <label><input type="text" id="txtApellido" placeholder="Apellido"></label><br>
+        <label><input type="text" id="txtMonto" placeholder="Monto a invertir en $"></label><br>
+        <label></label><input type="text" id="txtDias" placeholder="Cantidad de dias"><br>
+        <label><input type="submit" id="btnCalcular" value="Calcular"></label><br><br>
+        <label>¿Reinvertir al finalizar el plazo?</label><br>
+        <label>
+            <input type="radio" value="si" name="reinversion" id="siReinvertir" checked>
+            Sí
+        </label>
+        <label>
+            <input type="radio" value="no" name="reinversion" id="noReinvertir">
+            No
+        </label>
+    </form>
+    
     <div id="plazoFijo">
+
     </div>
 
-    <table id="plazoFijoTable">
-    </table>
+    <div id="plazoFijoTable">
+    </div>
 
 </body>
 </html>
